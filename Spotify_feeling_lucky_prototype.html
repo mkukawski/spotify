@@ -1,0 +1,67 @@
+<html>
+<body>
+<script type="text/javascript">
+
+function load(url, callback) {
+  var xmlhttp;
+  if (window.XMLHttpRequest) {
+    xmlhttp = new XMLHttpRequest();
+  } else {
+    // code for older browsers
+    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      callback(xmlhttp.responseText);
+    }
+  };
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
+}
+
+function determineQuery()
+{
+    var text = "";
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    return possible.charAt(Math.floor(Math.random() * possible.length));
+}
+
+
+function parseSpotifyApiResponse(response) {
+//"id" : "5rwuexO7oiRJKqzZrd1upQ"
+document.getElementById("debug").value = response;
+var matches = response.match(/\/tracks\/(.+)\"/);
+
+var trackEmbedUrl = "";
+
+if(matches && matches.length >= 2 && matches[1]) {
+	trackEmbedUrl = "https://embed.spotify.com/?uri=spotify:track:" + matches[1];
+} else {
+	// crap
+	trackEmbedUrl = "https://embed.spotify.com/?uri=spotify:track:4jUuqKRr1fB4c1RvU6syls";
+}
+
+document.getElementById("spotifyPlayer").src =  trackEmbedUrl ;
+
+}
+
+function search() {
+var maxKnownOffset = 100000;
+var offset = parseInt((Math.random() * 10000000) % maxKnownOffset);
+
+var url = "https://api.spotify.com/v1/search?market=GB&query=" + determineQuery() + "&limit=1&type=track&offset=" + offset + "&inst=SPOTIFY_TEAM_PLEASE_DONT_BAN_ME_AND_CONTACT_BEFORE_AT_mariusz.kukawski@wp.eu_THANKS";
+
+load(url, parseSpotifyApiResponse);
+
+}
+</script>
+<br />
+<button id="discover" onclick="search();"><h1>I'm feeling new music today!</h1></button>
+<br />
+<br />
+<iframe id="spotifyPlayer" src="https://embed.spotify.com/?uri=spotify:track:4th1RQAelzqgY7wL53UGQt" width="300" height="100" frameborder="0" allowtransparency="true"></iframe>
+<h2>Debug</h2>
+<textarea id="debug" columns=200 rows=10></textarea>
+</body>
+</html>
